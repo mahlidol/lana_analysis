@@ -2,10 +2,7 @@ import os
 import sys
 import csv
 
-# Get absolute path to project root
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# Add src/ to Python path
 SRC_PATH = os.path.join(PROJECT_ROOT, "src")
 sys.path.append(SRC_PATH)
 
@@ -54,10 +51,18 @@ def build_feature_table():
     if not rows:
         raise ValueError("No songs found. Check data/raw directory.")
 
+    print(f"Total songs processed: {len(rows)}")
+
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+    # FIX: collect all fieldnames
+    fieldnames = set()
+    for row in rows:
+        fieldnames.update(row.keys())
+    fieldnames = list(fieldnames)
+
     with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=rows[0].keys())
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
 
